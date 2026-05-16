@@ -1,10 +1,11 @@
 'use client'
-import { useState } from 'react'
-import { Menu, X, ShoppingCart, Heart } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Menu, X, ShoppingCart, Heart, User } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useCartStore } from '@/lib/cart'
+import { createClient } from '@/lib/supabase-client'
 
 type Props = {
   tenantName: string
@@ -24,10 +25,23 @@ const DESKTOP_LINKS = NAV_LINKS.filter((l) => l.href !== '/' && l.href !== '/fav
 
 export default function Navbar({ tenantName, logoUrl, categories }: Props) {
   const [isOpen, setIsOpen] = useState(false)
+  const [userInitial, setUserInitial] = useState<string | null>(null)
   const pathname = usePathname()
   const items = useCartStore((s) => s.items)
   const openCart = useCartStore((s) => s.openCart)
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        const name = user.user_metadata?.full_name ?? user.email ?? 'U'
+        setUserInitial(name[0].toUpperCase())
+      } else {
+        setUserInitial(null)
+      }
+    })
+  }, [pathname])
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-white border-b shadow-sm">
@@ -59,6 +73,15 @@ export default function Navbar({ tenantName, logoUrl, categories }: Props) {
           <div className="flex items-center gap-1">
             <Link href="/favoritos" className="hidden md:flex p-2 hover:opacity-70 transition-opacity">
               <Heart size={20} />
+            </Link>
+            <Link href={userInitial ? '/mi-cuenta' : '/login'} className="hidden md:flex p-2 hover:opacity-70 transition-opacity">
+              {userInitial ? (
+                <div className="w-7 h-7 rounded-full text-white text-xs font-bold flex items-center justify-center" style={{ backgroundColor: 'var(--color-primary)' }}>
+                  {userInitial}
+                </div>
+              ) : (
+                <User size={20} />
+              )}
             </Link>
             <button onClick={openCart} className="relative p-2 hover:opacity-70 transition-opacity">
               <ShoppingCart size={20} />
