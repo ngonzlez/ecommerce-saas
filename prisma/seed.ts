@@ -1,3 +1,5 @@
+import { config } from 'dotenv'
+config({ path: '.env.local' })
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '../lib/generated/prisma/client'
 
@@ -81,6 +83,7 @@ async function main() {
     {
       name: 'Licuadora Premium 1000W',
       slug: 'licuadora-premium-1000w',
+      description: 'Potente licuadora de 1000W con vaso de vidrio templado de 1.5L. Ideal para smoothies, jugos y batidos. 5 velocidades + función pulse. Cuchillas de acero inoxidable de alta resistencia. Fácil de limpiar y de uso diario.',
       price: 225000,
       comparePrice: 300000,
       stock: 15,
@@ -92,6 +95,7 @@ async function main() {
     {
       name: 'Auriculares Bluetooth Pro',
       slug: 'auriculares-bluetooth-pro',
+      description: 'Auriculares inalámbricos con cancelación activa de ruido (ANC). Hasta 30hs de batería, carga rápida USB-C. Sonido Hi-Fi con bajos profundos. Compatible con iOS y Android. Incluye estuche rígido y cable auxiliar.',
       price: 180000,
       comparePrice: null,
       stock: 8,
@@ -103,6 +107,7 @@ async function main() {
     {
       name: 'Set de Sartenes Antiadherentes',
       slug: 'set-sartenes-antiadherentes',
+      description: 'Set de 3 sartenes (20, 24 y 28 cm) con recubrimiento antiadherente de granito libre de PFOA. Apto para todo tipo de cocinas incluyendo inducción. Mango ergonómico que no se calienta. Fácil limpieza, apta para lavavajillas.',
       price: 95000,
       comparePrice: 130000,
       stock: 20,
@@ -114,6 +119,7 @@ async function main() {
     {
       name: 'Cafetera Espresso Automática',
       slug: 'cafetera-espresso-automatica',
+      description: 'Cafetera espresso totalmente automática con molinillo integrado. Presión de 15 bares para un espresso perfecto. Pantalla LCD con 6 programas preconfigurados. Depósito de agua de 1.8L. Incluye vaporizador para espumar leche.',
       price: 350000,
       comparePrice: null,
       stock: 5,

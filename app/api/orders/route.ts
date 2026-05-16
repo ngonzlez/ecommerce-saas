@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 
-const ratelimit = process.env.UPSTASH_REDIS_REST_URL
+const ratelimit = process.env.UPSTASH_REDIS_REST_URL?.includes("upstash.io")
   ? new Ratelimit({
       redis: Redis.fromEnv(),
       limiter: Ratelimit.slidingWindow(5, '1 m'),

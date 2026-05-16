@@ -6,7 +6,7 @@ import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 
 // Rate limit: 10 attempts per minute per IP
-const ratelimit = process.env.UPSTASH_REDIS_REST_URL
+const ratelimit = process.env.UPSTASH_REDIS_REST_URL?.includes("upstash.io")
   ? new Ratelimit({
       redis: Redis.fromEnv(),
       limiter: Ratelimit.slidingWindow(10, '1 m'),

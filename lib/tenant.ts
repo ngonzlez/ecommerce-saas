@@ -1,9 +1,10 @@
+import { cache } from 'react'
 import { db } from './db'
 export { formatPrice, calcDiscountPercent } from './format'
 
 export type TenantWithRelations = Awaited<ReturnType<typeof getTenantBySlug>>
 
-export async function getTenantBySlug(slug: string) {
+export const getTenantBySlug = cache(async function getTenantBySlug(slug: string) {
   return db.tenant.findUnique({
     where: { slug },
     include: {
@@ -15,7 +16,7 @@ export async function getTenantBySlug(slug: string) {
       categories: { orderBy: { name: 'asc' } },
     },
   })
-}
+})
 
 export function getSlugFromHost(host: string): string {
   const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN ?? 'tuapp.com'

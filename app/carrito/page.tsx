@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { Minus, Plus, Trash2, Tag } from 'lucide-react'
 import { useCartStore } from '@/lib/cart'
 import { formatPrice } from '@/lib/format'
-import CartDrawer from '@/components/storefront/CartDrawer'
 
 export default function CartPage() {
   const { items, updateQty, removeItem, subtotal, discountAmount, couponCode, setCoupon, clearCoupon } =
@@ -51,7 +50,6 @@ export default function CartPage() {
 
   return (
     <>
-      <CartDrawer />
       <main className="pt-14 md:pt-16 min-h-screen">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-6">

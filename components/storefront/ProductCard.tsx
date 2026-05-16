@@ -6,6 +6,7 @@ import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useCartStore } from '@/lib/cart'
+import { useFavoritesStore } from '@/lib/favorites'
 import { formatPrice, calcDiscountPercent } from '@/lib/format'
 import { toast } from 'sonner'
 
@@ -44,6 +45,8 @@ export default function ProductCard({
 }: Props) {
   const [imgIdx, setImgIdx] = useState(0)
   const addItem = useCartStore((s) => s.addItem)
+  const { toggle: toggleFav, isFavorite } = useFavoritesStore()
+  const fav = isFavorite(id)
 
   const discountPct =
     comparePrice && comparePrice > price ? calcDiscountPercent(price, comparePrice) : null
@@ -86,10 +89,14 @@ export default function ProductCard({
 
           {/* Favorite */}
           <button
-            onClick={(e) => { e.preventDefault(); toast('Favoritos próximamente') }}
+            onClick={(e) => {
+              e.preventDefault()
+              toggleFav({ productId: id, slug, name, price, comparePrice: comparePrice ?? null, image: images[0] ?? null, stock, showStock, badge: badge ?? null })
+              toast(fav ? 'Eliminado de favoritos' : '❤️ Agregado a favoritos')
+            }}
             className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors"
           >
-            <Heart size={15} className="text-gray-600" />
+            <Heart size={15} className={fav ? 'fill-red-500 text-red-500' : 'text-gray-600'} />
           </button>
 
           {/* Image carousel dots */}
