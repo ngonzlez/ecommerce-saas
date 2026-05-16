@@ -122,6 +122,14 @@ Layout dos columnas (referencia JRPack):
 - [ ] `WhatsAppFloat.tsx`: botón flotante WA si `tenant.whatsappFloatingButton=true`
 - [ ] `SocialLinks.tsx`: iconos de redes habilitadas
 
+### Seguridad — Fase 1
+
+- [ ] **Aislamiento multi-tenant**: toda query a DB filtra por `tenantId` — nunca buscar por `id` solo
+- [ ] **Price recalculation server-side**: en `POST /api/orders`, ignorar precio del frontend, recalcular desde DB
+- [ ] **Cupones atómicos**: usar `prisma.$transaction()` con `increment` atómico en `usedCount`, nunca read→write manual
+- [ ] **CSRF**: validar header `Origin` en todas las API routes de mutación (orders, favorites, coupons)
+- [ ] **Rate limiting en checkout y cupones**: instalar `@upstash/ratelimit` + `@upstash/redis` (free tier), aplicar en `/api/orders` y `/api/coupons/validate`
+
 ---
 
 ## FASE 2 — Auth Cliente + Favoritos + Perfil
@@ -142,6 +150,11 @@ Layout dos columnas (referencia JRPack):
 - [ ] Página `/mi-cuenta/pedidos`: historial paginado
 - [ ] Página `/mi-cuenta/pedidos/[orderNumber]`: detalle con estado actual
 
+### Seguridad — Fase 2
+
+- [ ] **Rate limiting en login/registro**: aplicar `@upstash/ratelimit` en `/api/auth/*` (máx 5 intentos/minuto por IP)
+- [ ] **Validar que el pedido pertenece al cliente**: en `/mi-cuenta/pedidos/[orderNumber]`, verificar `order.customerId === session.userId`
+
 ---
 
 ## FASE 3 — Panel Admin
@@ -153,6 +166,7 @@ Layout dos columnas (referencia JRPack):
 - [ ] Auth admin por tenant (Supabase Auth, rol separado)
 - [ ] Layout admin con sidebar colapsable
 - [ ] Middleware: proteger rutas `/admin/*`
+- [ ] **Seguridad**: verificar en cada API route de admin que el `tenantId` del token coincide con el recurso modificado
 
 ### Dashboard
 
@@ -171,6 +185,8 @@ Layout dos columnas (referencia JRPack):
   - Seleccionar categoría
   - `BadgeEditor.tsx`: tipo (discount/custom), texto libre, color picker (rojo/verde/azul/naranja/negro)
 - [ ] Eliminar producto (soft delete)
+- [ ] **Seguridad uploads**: validar MIME type y tamaño server-side antes de subir a Supabase Storage (máx 5MB, solo jpg/png/webp)
+- [ ] **Supabase Storage RLS**: configurar policies para que admin solo pueda escribir en su propio bucket (`/tenantId/*`)
 
 ### Categorías
 
