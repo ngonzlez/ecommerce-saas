@@ -1,0 +1,247 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Tenant {
+  id   String @id @default(cuid())
+  slug String @unique
+  name String
+
+  primaryColor   String  @default("#000000")
+  secondaryColor String  @default("#ffffff")
+  logoUrl        String?
+  faviconUrl     String?
+  homeTemplate   String  @default("grid")
+
+  whatsappNumber String?
+  email          String
+  address        String?
+
+  requireRegistration    Boolean @default(false)
+  allowGuestCheckout     Boolean @default(true)
+  whatsappFloatingButton Boolean @default(true)
+
+  products        Product[]
+  categories      Category[]
+  orders          Order[]
+  banners         Banner[]
+  marqueeTexts    MarqueeText[]
+  shippingMethods ShippingMethod[]
+  paymentMethods  PaymentMethodConfig[]
+  socialLinks     SocialLink[]
+  coupons         Coupon[]
+  customers       Customer[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SocialLink {
+  id       String  @id @default(cuid())
+  tenantId String
+  tenant   Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  platform String
+  url      String
+  enabled  Boolean @default(true)
+  order    Int     @default(0)
+}
+
+model ShippingMethod {
+  id          String  @id @default(cuid())
+  tenantId    String
+  tenant      Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  type        String  @default("delivery")
+  price       Int     @default(0)
+  enabled     Boolean @default(true)
+  order       Int     @default(0)
+  orders      Order[]
+}
+
+model PaymentMethodConfig {
+  id       String  @id @default(cuid())
+  tenantId String
+  tenant   Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  type     String
+  label    String
+  details  String?
+  enabled  Boolean @default(false)
+  order    Int     @default(0)
+}
+
+model Coupon {
+  id             String    @id @default(cuid())
+  tenantId       String
+  tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  code           String
+  type           String    @default("percentage")
+  value          Int
+  minOrderAmount Int?
+  maxUses        Int?
+  usedCount      Int       @default(0)
+  expiresAt      DateTime?
+  enabled        Boolean   @default(true)
+  orders         Order[]
+
+  @@unique([tenantId, code])
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  tenantId String
+  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name     String
+  slug     String
+  imageUrl String?
+  products Product[]
+
+  @@unique([tenantId, slug])
+}
+
+model Product {
+  id           String  @id @default(cuid())
+  tenantId     String
+  tenant       Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name         String
+  slug         String
+  description  String?
+  price        Int
+  comparePrice Int?
+  stock        Int     @default(0)
+  showStock    Boolean @default(false)
+  sku          String?
+  images       String[]
+  featured     Boolean @default(false)
+  active       Boolean @default(true)
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+
+  badge      ProductBadge?
+  orderItems OrderItem[]
+  favorites  Favorite[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, slug])
+}
+
+model ProductBadge {
+  id        String  @id @default(cuid())
+  productId String  @unique
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  text      String
+  color     String  @default("red")
+  type      String  @default("custom")
+}
+
+model Banner {
+  id       String  @id @default(cuid())
+  tenantId String
+  tenant   Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  type     String  @default("hero")
+  imageUrl String?
+  title    String?
+  subtitle String?
+  linkUrl  String?
+  order    Int     @default(0)
+  enabled  Boolean @default(true)
+}
+
+model MarqueeText {
+  id       String  @id @default(cuid())
+  tenantId String
+  tenant   Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  text     String
+  order    Int     @default(0)
+  enabled  Boolean @default(true)
+}
+
+model Customer {
+  id       String @id @default(cuid())
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  userId  String?
+  name    String
+  email   String
+  phone   String?
+  address String?
+
+  orders    Order[]
+  favorites Favorite[]
+
+  createdAt DateTime @default(now())
+
+  @@unique([tenantId, email])
+}
+
+model Favorite {
+  id         String   @id @default(cuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([customerId, productId])
+}
+
+model Order {
+  id          String @id @default(cuid())
+  tenantId    String
+  tenant      Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  orderNumber String @unique
+
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+
+  guestName  String?
+  guestEmail String?
+  guestPhone String?
+
+  shippingMethodId   String?
+  shippingMethod     ShippingMethod? @relation(fields: [shippingMethodId], references: [id])
+  shippingMethodName String?
+  shippingPrice      Int             @default(0)
+  deliveryAddress    String?
+  deliveryCity       String?
+  billingAddress     String?
+  rucCi              String?
+
+  paymentMethod String?
+  paymentStatus String  @default("pending")
+
+  couponId       String?
+  coupon         Coupon? @relation(fields: [couponId], references: [id])
+  couponCode     String?
+  discountAmount Int     @default(0)
+
+  subtotal Int
+  total    Int
+  notes    String?
+  status   String  @default("pending")
+
+  items OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id           String  @id @default(cuid())
+  orderId      String
+  order        Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId    String
+  product      Product @relation(fields: [productId], references: [id])
+  productName  String
+  productImage String?
+  quantity     Int
+  price        Int
+}
