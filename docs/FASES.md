@@ -240,9 +240,9 @@ Layout dos columnas (referencia JRPack):
 
 ---
 
-## FASE 4 — Templates, Pagopar, Polish, Deploy
+## FASE 4 — Templates, Polish, Deploy
 
-> Objetivo: producto terminado y deployado en producción.
+> Objetivo: producto completo y deployado en producción.
 
 ### Templates de Home
 
@@ -251,12 +251,6 @@ Layout dos columnas (referencia JRPack):
 - [ ] `HomeMagazine.tsx`: layout editorial con secciones marcadas
 - [ ] `SplitSection.tsx`: imagen izq + texto/CTA derecha (configurable en admin)
 - [ ] `EditorialGrid.tsx`: texto izq + mosaico fotos derecha
-
-### Pagopar
-
-- [ ] Integrar Pagopar SDK/API
-- [ ] Flujo de pago: crear order en Pagopar → redirect → callback → actualizar paymentStatus en DB
-- [ ] Email al confirmar pago exitoso
 
 ### Super-Admin (`admin.tuapp.com`)
 
@@ -283,9 +277,23 @@ Layout dos columnas (referencia JRPack):
 
 ---
 
+## FASE 5 — Pagopar (Pago Online)
+
+> Objetivo: agregar pago online con Pagopar una vez que la plataforma esté estable en producción.
+
+- [ ] Estudiar documentación API Pagopar
+- [ ] Integrar Pagopar SDK/API en `/lib/pagopar.ts`
+- [ ] Activar "Pagopar" como método de pago en admin (ya existe el toggle, falta el flujo real)
+- [ ] Flujo: crear order en Pagopar → redirect al checkout de Pagopar → webhook callback → actualizar `paymentStatus` en DB
+- [ ] Manejo de pagos fallidos: redirect de vuelta con error
+- [ ] Email automático al cliente al confirmar pago exitoso
+- [ ] Test completo del flujo en staging antes de producción
+
+---
+
 ## Convenciones Git
 
-- Branch por fase: `fase-1`, `fase-2`, `fase-3`, `fase-4`
+- Branch por fase: `fase-1`, `fase-2`, `fase-3`, `fase-4`, `fase-5`
 - Commits en español, convencional: `feat:`, `fix:`, `chore:`
 - PR de cada fase hacia `main` al terminar
-- Repo: `github.com/ngnzalez/ecommerce-saas`
+- Repo: `github.com/ngonzlez/ecommerce-saas`
