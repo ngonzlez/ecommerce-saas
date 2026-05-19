@@ -19,11 +19,13 @@ import {
   MapPin,
   Phone,
   Shield,
+  FileUp,
 } from 'lucide-react'
 
 const items = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { label: 'Productos', href: '/admin/productos', icon: Package },
+  { label: 'Importar', href: '/admin/importar', icon: FileUp },
   { label: 'Categorías', href: '/admin/categorias', icon: Tag },
   { label: 'Pedidos', href: '/admin/pedidos', icon: ShoppingBag },
   { label: 'Cupones', href: '/admin/cupones', icon: Ticket },

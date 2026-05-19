@@ -293,7 +293,36 @@ Layout dos columnas (referencia JRPack):
 
 ---
 
-## FASE 5 — Pagopar (Pago Online)
+## FASE 5 — Importación Masiva de Productos
+
+> Objetivo: el comercio puede importar catálogos de miles de productos desde Excel/CSV sin cargar uno a uno.
+
+### Fase 5a — Importación por CSV/Excel (sin imágenes) ✅
+
+- [x] API `POST /api/admin/import/products` — parsea xlsx/csv, inserta en batches de 500
+- [x] API `GET /api/admin/import/products/template` — descarga plantilla CSV
+- [x] Página `/admin/importar` — UI con upload, progreso, reporte de errores por fila
+- [x] Link "Importar" en sidebar admin
+- **Columnas soportadas**: nombre, precio, descripcion, precio_comparacion, stock, sku, categoria (auto-crea), destacado, activo, badge_texto, badge_color, imagen_1..imagen_5 (URLs)
+
+### Fase 5b — Importación con imágenes embebidas (pendiente)
+
+> Para comercios que tienen imágenes incrustadas en celdas del Excel, no como URLs.
+
+- [ ] Instalar `exceljs` (soporta extracción de imágenes embebidas, SheetJS free no lo hace)
+- [ ] Refactor página `/admin/importar` para procesar **client-side** en tandas de 50:
+  - Parsear Excel en browser con `exceljs`
+  - Extraer imágenes embebidas por celda (imagen_1..imagen_5)
+  - Subir cada imagen directo a Supabase Storage desde browser (SDK JS)
+  - Colectar URLs resultantes
+  - POST batch de productos + URLs a `/api/admin/import/products`
+- [ ] Barra de progreso por tanda: "Procesando 150 / 5000..."
+- [ ] Reporte final: insertados / errores por fila
+- [ ] Validar MIME type y tamaño de imágenes embebidas antes de subir (máx 5MB, solo jpg/png/webp)
+
+---
+
+## FASE 6 — Pagopar (Pago Online)
 
 > Objetivo: agregar pago online con Pagopar una vez que la plataforma esté estable en producción.
 
