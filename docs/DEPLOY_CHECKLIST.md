@@ -15,7 +15,7 @@
 > Ya existente. Verificar que tenga todo configurado.
 
 - [ ] Proyecto activo en [supabase.com](https://supabase.com)
-- [ ] `prisma migrate deploy` ejecutado contra DB de producción
+- [ ] `npx prisma migrate deploy` ejecutado contra DB de producción
 - [ ] Auth habilitado (Email/Password)
 - [ ] Storage bucket `uploads` creado con política pública para lectura
 - [ ] RLS en Storage: solo admin puede escribir en `/tenantId/*`
@@ -37,10 +37,10 @@ SUPABASE_SERVICE_ROLE_KEY=eyJh...
 
 - [ ] Crear nuevo proyecto en Supabase → nombre: `ecommerce-saas-dev`
 - [ ] Anotar URL y keys del proyecto dev
-- [ ] Ejecutar `prisma migrate deploy` contra la DB dev
+- [ ] Ejecutar `npx prisma migrate deploy` contra la DB dev
 - [ ] Crear usuario de prueba en Supabase Auth del proyecto dev
 - [ ] Crear Storage bucket `uploads` en proyecto dev
-- [ ] Ejecutar seed: `pnpm prisma db seed` para tenant demo
+- [ ] Ejecutar seed: `npx prisma db seed` para tenant demo
 
 **Variables para `.env.local` local / Vercel preview:**
 ```
@@ -137,7 +137,7 @@ CNAME   admin     cname.vercel-dns.com    Auto   ← super-admin (o cae en wildc
 git checkout main && git status
 
 # 2. Correr migrations en DB de producción
-DATABASE_URL="postgresql://..." pnpm prisma migrate deploy
+DATABASE_URL="postgresql://..." npx prisma migrate deploy
 
 # 3. Push a main (dispara deploy en Vercel automático)
 git push origin main
@@ -184,7 +184,7 @@ git push origin main
 
 - [ ] Agregar [Sentry](https://sentry.io) (free tier suficiente):
   ```bash
-  pnpm add @sentry/nextjs
+  npm install @sentry/nextjs
   npx @sentry/wizard@latest -i nextjs
   ```
   Variables: `SENTRY_DSN=https://...`
@@ -204,13 +204,13 @@ cp .env.example .env.local
 # Editar .env.local con los valores del proyecto dev
 
 # Correr migrations en DB dev
-pnpm prisma migrate deploy
+npx prisma migrate deploy
 
 # Seed con datos de prueba
-pnpm prisma db seed
+npx prisma db seed
 
 # Iniciar dev server
-pnpm dev
+npm run dev
 ```
 
 > Futuros features: crear rama `feature/nombre` desde `dev`, PR a `dev`, luego PR `dev → main`.
