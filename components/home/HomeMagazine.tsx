@@ -4,6 +4,7 @@ import { Flame } from 'lucide-react'
 import MarqueeTicker from './MarqueeTicker'
 import PromoBanner from './PromoBanner'
 import EditorialGrid from './EditorialGrid'
+import FadeInSection from './FadeInSection'
 import ProductCard from '@/components/storefront/ProductCard'
 import type { HomeTemplateProps } from './types'
 
@@ -54,6 +55,7 @@ export default function HomeMagazine({
 
       {/* Categories as image tiles */}
       {categories.length > 0 && (
+        <FadeInSection>
         <section className="py-10 md:py-16 px-4 max-w-7xl mx-auto">
           <h2 className="text-xs font-bold uppercase tracking-widest opacity-40 mb-6">Categorías</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
@@ -78,10 +80,12 @@ export default function HomeMagazine({
             ))}
           </div>
         </section>
+        </FadeInSection>
       )}
 
       {/* Editorial featured — 1 big + grid */}
       {featuredProducts.length > 0 && (
+        <FadeInSection delay={0.05}>
         <section className="py-10 md:py-16 px-4 max-w-7xl mx-auto">
           <div className="flex items-baseline justify-between mb-8">
             <h2 className="text-2xl sm:text-3xl font-black">Destacados</h2>
@@ -149,6 +153,7 @@ export default function HomeMagazine({
             </div>
           </div>
         </section>
+        </FadeInSection>
       )}
 
       <PromoBanner banners={promoBannersMiddle} />

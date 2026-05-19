@@ -4,6 +4,7 @@ import { Flame, Tag, ShoppingBag, Shirt, Tv, Smartphone, Home, Utensils, BookOpe
 import HeroBannerCarousel from './HeroBannerCarousel'
 import MarqueeTicker from './MarqueeTicker'
 import PromoBanner from './PromoBanner'
+import FadeInSection from './FadeInSection'
 import ProductCard from '@/components/storefront/ProductCard'
 import type { HomeTemplateProps } from './types'
 
@@ -26,6 +27,7 @@ export default function HomeGrid({
       <PromoBanner banners={promoBannersTop} />
 
       {categories.length > 0 && (
+        <FadeInSection>
         <section className="py-10 md:py-16 px-4 max-w-7xl mx-auto">
           <h2 className="text-xl sm:text-2xl font-bold mb-6">Categorías</h2>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
@@ -53,11 +55,13 @@ export default function HomeGrid({
             ))}
           </div>
         </section>
+        </FadeInSection>
       )}
 
       <PromoBanner banners={promoBannersMiddle} />
 
       {featuredProducts.length > 0 && (
+        <FadeInSection delay={0.05}>
         <section className="py-10 md:py-16 px-4 max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl sm:text-2xl font-bold">Destacados</h2>
@@ -71,9 +75,11 @@ export default function HomeGrid({
             ))}
           </div>
         </section>
+        </FadeInSection>
       )}
 
       {offerProducts.length > 0 && (
+        <FadeInSection delay={0.05}>
         <section className="py-10 md:py-16 px-4 max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
@@ -89,6 +95,7 @@ export default function HomeGrid({
             ))}
           </div>
         </section>
+        </FadeInSection>
       )}
 
       <PromoBanner banners={promoBannersBottom} />

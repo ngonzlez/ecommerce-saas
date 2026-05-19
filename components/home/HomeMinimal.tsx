@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Flame } from 'lucide-react'
 import MarqueeTicker from './MarqueeTicker'
+import FadeInSection from './FadeInSection'
 import ProductCard from '@/components/storefront/ProductCard'
 import type { HomeTemplateProps } from './types'
 
@@ -51,6 +52,7 @@ export default function HomeMinimal({
 
       {/* Featured — clean 3-col grid with generous spacing */}
       {featuredProducts.length > 0 && (
+        <FadeInSection>
         <section className="py-16 md:py-20 px-4 max-w-7xl mx-auto">
           <div className="flex items-baseline justify-between mb-10">
             <h2 className="text-3xl md:text-4xl font-black tracking-tight">Destacados</h2>
@@ -64,6 +66,7 @@ export default function HomeMinimal({
             ))}
           </div>
         </section>
+        </FadeInSection>
       )}
 
       {/* Divider */}
@@ -75,6 +78,7 @@ export default function HomeMinimal({
 
       {/* Offers */}
       {offerProducts.length > 0 && (
+        <FadeInSection delay={0.05}>
         <section className="py-16 md:py-20 px-4 max-w-7xl mx-auto">
           <div className="flex items-baseline justify-between mb-10">
             <h2 className="text-3xl md:text-4xl font-black tracking-tight flex items-center gap-2">
@@ -91,6 +95,7 @@ export default function HomeMinimal({
             ))}
           </div>
         </section>
+        </FadeInSection>
       )}
     </main>
   )

@@ -4,6 +4,7 @@ import { Flame } from 'lucide-react'
 import MarqueeTicker from './MarqueeTicker'
 import PromoBanner from './PromoBanner'
 import SplitSection from './SplitSection'
+import FadeInSection from './FadeInSection'
 import ProductCard from '@/components/storefront/ProductCard'
 import type { HomeTemplateProps } from './types'
 
@@ -78,22 +79,24 @@ export default function HomeHero({
 
       {/* Featured products — wider 2-col on mobile, 3-col desktop */}
       {featuredProducts.length > 0 && (
-        <section className="py-10 md:py-16 px-4 max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--color-primary)' }}>Selección</p>
-              <h2 className="text-2xl sm:text-3xl font-black">Destacados</h2>
+        <FadeInSection>
+          <section className="py-10 md:py-16 px-4 max-w-7xl mx-auto">
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--color-primary)' }}>Selección</p>
+                <h2 className="text-2xl sm:text-3xl font-black">Destacados</h2>
+              </div>
+              <Link href="/productos" className="text-sm font-semibold hover:underline" style={{ color: 'var(--color-primary)' }}>
+                Ver todos →
+              </Link>
             </div>
-            <Link href="/productos" className="text-sm font-semibold hover:underline" style={{ color: 'var(--color-primary)' }}>
-              Ver todos →
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-            {featuredProducts.map((p) => (
-              <ProductCard key={p.id} {...p} />
-            ))}
-          </div>
-        </section>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+              {featuredProducts.map((p) => (
+                <ProductCard key={p.id} {...p} />
+              ))}
+            </div>
+          </section>
+        </FadeInSection>
       )}
 
       {/* Split promo */}
@@ -111,24 +114,26 @@ export default function HomeHero({
 
       {/* Offers */}
       {offerProducts.length > 0 && (
-        <section className="py-10 md:py-16 px-4 max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest mb-1 text-orange-500">Precios especiales</p>
-              <h2 className="text-2xl sm:text-3xl font-black flex items-center gap-2">
-                <Flame size={26} className="text-orange-500" />Ofertas
-              </h2>
+        <FadeInSection delay={0.05}>
+          <section className="py-10 md:py-16 px-4 max-w-7xl mx-auto">
+            <div className="flex items-end justify-between mb-8">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest mb-1 text-orange-500">Precios especiales</p>
+                <h2 className="text-2xl sm:text-3xl font-black flex items-center gap-2">
+                  <Flame size={26} className="text-orange-500" />Ofertas
+                </h2>
+              </div>
+              <Link href="/productos?ofertas=true" className="text-sm font-semibold hover:underline" style={{ color: 'var(--color-primary)' }}>
+                Ver todas →
+              </Link>
             </div>
-            <Link href="/productos?ofertas=true" className="text-sm font-semibold hover:underline" style={{ color: 'var(--color-primary)' }}>
-              Ver todas →
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
-            {offerProducts.map((p) => (
-              <ProductCard key={p.id} {...p} />
-            ))}
-          </div>
-        </section>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+              {offerProducts.map((p) => (
+                <ProductCard key={p.id} {...p} />
+              ))}
+            </div>
+          </section>
+        </FadeInSection>
       )}
 
       <PromoBanner banners={promoBannersBottom} />
