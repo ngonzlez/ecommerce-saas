@@ -1,10 +1,34 @@
 import { headers } from 'next/headers'
+import type { Metadata } from 'next'
 import { getTenantBySlug, getSlugFromHost } from '@/lib/tenant'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import WhatsAppFloat from '@/components/layout/WhatsAppFloat'
 import CartDrawer from '@/components/storefront/CartDrawer'
 import AnnouncementBar from '@/components/layout/AnnouncementBar'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const headersList = await headers()
+  const slug = headersList.get('x-tenant-slug') ?? getSlugFromHost(headersList.get('host') ?? '')
+  const tenant = await getTenantBySlug(slug)
+
+  const name = tenant?.name ?? 'Tienda'
+  const description = `Tienda online de ${name}. Comprá desde casa con envío a todo el país.`
+
+  return {
+    title: {
+      default: name,
+      template: `%s | ${name}`,
+    },
+    description,
+    openGraph: {
+      siteName: name,
+      description,
+      images: tenant?.logoUrl ? [{ url: tenant.logoUrl, alt: name }] : [],
+    },
+    icons: tenant?.faviconUrl ? { icon: tenant.faviconUrl } : undefined,
+  }
+}
 
 export default async function StorefrontLayout({ children }: { children: React.ReactNode }) {
   const headersList = await headers()
