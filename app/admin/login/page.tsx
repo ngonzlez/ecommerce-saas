@@ -17,11 +17,17 @@ export default function AdminLoginPage() {
     setLoading(true)
     try {
       const supabase = createClient()
-      const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
+      const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
       if (authError) {
-        setError(authError.message)
+        setError('Email o contraseña incorrectos.')
       } else {
-        router.push('/admin/dashboard')
+        const res = await fetch('/api/admin/auth/check', { headers: { 'x-user-email': data.user?.email ?? '' } })
+        if (!res.ok) {
+          await supabase.auth.signOut()
+          setError('Este email no tiene acceso al panel de esta tienda.')
+        } else {
+          router.push('/admin/dashboard')
+        }
       }
     } catch {
       setError('Error inesperado. Intente de nuevo.')
