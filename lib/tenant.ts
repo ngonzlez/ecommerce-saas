@@ -7,7 +7,7 @@ export type TenantWithRelations = Awaited<ReturnType<typeof getTenantBySlug>>
 
 function fetchTenantBySlug(slug: string) {
   return db.tenant.findFirst({
-    where: { OR: [{ slug }, { customDomain: slug }] },
+    where: { OR: [{ slug }, { customDomain: slug }], suspended: false },
     include: {
       banners: { where: { enabled: true }, orderBy: { order: 'asc' } },
       marqueeTexts: { where: { enabled: true }, orderBy: { order: 'asc' } },

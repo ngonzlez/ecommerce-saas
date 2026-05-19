@@ -29,6 +29,7 @@ model Tenant {
   requireRegistration    Boolean @default(false)
   allowGuestCheckout     Boolean @default(true)
   whatsappFloatingButton Boolean @default(true)
+  suspended              Boolean @default(false)
 
   products        Product[]
   branches        Branch[]

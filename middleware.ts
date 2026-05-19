@@ -6,6 +6,14 @@ export function middleware(request: NextRequest) {
   const appDomain = process.env.NEXT_PUBLIC_APP_DOMAIN ?? 'tuapp.com'
   const hostname = host.split(':')[0].replace(/^www\./, '')
 
+  // Super-admin subdomain → rewrite to /super-admin/*
+  if (hostname === `admin.${appDomain}`) {
+    const url = request.nextUrl.clone()
+    const path = request.nextUrl.pathname
+    url.pathname = path.startsWith('/super-admin') ? path : `/super-admin${path === '/' ? '/tenants' : path}`
+    return NextResponse.rewrite(url)
+  }
+
   let tenantSlug: string
   if (hostname === 'localhost' || hostname === appDomain) {
     tenantSlug = process.env.TENANT_SLUG_DEV ?? 'demo'
