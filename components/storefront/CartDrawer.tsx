@@ -1,4 +1,5 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Plus, Minus, Trash2, ShoppingBag } from 'lucide-react'
 import Image from 'next/image'
@@ -8,9 +9,14 @@ import { formatPrice } from '@/lib/format'
 import { slideInRight } from '@/lib/animations'
 
 export default function CartDrawer() {
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+
   const { items, isOpen, closeCart, updateQty, removeItem, subtotal, discountAmount, couponCode } =
     useCartStore()
   const total = subtotal() - discountAmount
+
+  if (!mounted) return null
 
   return (
     <AnimatePresence>
@@ -55,7 +61,7 @@ export default function CartDrawer() {
               <>
                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
                   {items.map((item) => (
-                    <div key={item.productId} className="flex gap-3">
+                    <div key={item.cartKey} className="flex gap-3">
                       <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-100 shrink-0">
                         {item.image && (
                           <Image src={item.image} alt={item.name} fill className="object-cover" />
@@ -63,19 +69,24 @@ export default function CartDrawer() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium line-clamp-2 leading-tight">{item.name}</p>
+                        {(item.variants ?? []).length > 0 && (
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            {(item.variants ?? []).map(v => v.optionName).join(' · ')}
+                          </p>
+                        )}
                         <p className="text-sm font-bold mt-0.5" style={{ color: 'var(--color-primary)' }}>
                           {formatPrice(item.price * item.quantity)}
                         </p>
                         <div className="flex items-center gap-2 mt-1.5">
                           <button
-                            onClick={() => updateQty(item.productId, item.quantity - 1)}
+                            onClick={() => updateQty(item.cartKey, item.quantity - 1)}
                             className="w-6 h-6 rounded-full border flex items-center justify-center hover:bg-gray-100"
                           >
                             <Minus size={12} />
                           </button>
                           <span className="text-sm w-6 text-center">{item.quantity}</span>
                           <button
-                            onClick={() => updateQty(item.productId, item.quantity + 1)}
+                            onClick={() => updateQty(item.cartKey, item.quantity + 1)}
                             className="w-6 h-6 rounded-full border flex items-center justify-center hover:bg-gray-100"
                           >
                             <Plus size={12} />
@@ -83,7 +94,7 @@ export default function CartDrawer() {
                         </div>
                       </div>
                       <button
-                        onClick={() => removeItem(item.productId)}
+                        onClick={() => removeItem(item.cartKey)}
                         className="p-1 text-gray-400 hover:text-red-500 transition-colors shrink-0"
                       >
                         <Trash2 size={16} />

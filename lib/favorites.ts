@@ -10,6 +10,7 @@ type FavoriteItem = {
   image: string | null
   stock: number
   showStock: boolean
+  trackStock: boolean
   badge: { text: string; color: string; type: string } | null
 }
 

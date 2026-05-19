@@ -19,6 +19,10 @@ export async function GET(
     include: {
       badge: true,
       category: { select: { name: true, slug: true } },
+      variantGroups: {
+        orderBy: { order: 'asc' },
+        include: { options: { orderBy: { order: 'asc' } } },
+      },
     },
   })
 
@@ -33,10 +37,17 @@ export async function GET(
     comparePrice: product.comparePrice,
     stock: product.stock,
     showStock: product.showStock,
+    trackStock: product.trackStock,
     images: product.images,
     category: product.category,
     badge: product.badge
       ? { text: product.badge.text, color: product.badge.color, type: product.badge.type }
       : null,
+    variantGroups: product.variantGroups.map(g => ({
+      id: g.id,
+      name: g.name,
+      required: g.required,
+      options: g.options.map(o => ({ id: o.id, name: o.name })),
+    })),
   })
 }

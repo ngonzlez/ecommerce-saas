@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -21,6 +21,7 @@ type Props = {
   images: string[]
   stock: number
   showStock: boolean
+  trackStock: boolean
   badge?: Badge
 }
 
@@ -41,12 +42,16 @@ export default function ProductCard({
   images,
   stock,
   showStock,
+  trackStock,
   badge,
 }: Props) {
   const [imgIdx, setImgIdx] = useState(0)
+  const [mounted, setMounted] = useState(false)
   const addItem = useCartStore((s) => s.addItem)
   const { toggle: toggleFav, isFavorite } = useFavoritesStore()
-  const fav = isFavorite(id)
+  const fav = mounted && isFavorite(id)
+
+  useEffect(() => setMounted(true), [])
 
   const discountPct =
     comparePrice && comparePrice > price ? calcDiscountPercent(price, comparePrice) : null
@@ -56,7 +61,7 @@ export default function ProductCard({
 
   function handleAddToCart(e: React.MouseEvent) {
     e.preventDefault()
-    addItem({ productId: id, name, price, image: images[0] ?? null, slug })
+    addItem({ productId: id, name, price, image: images[0] ?? null, slug, variants: [] })
     toast.success(`${name} agregado al carrito`)
   }
 
@@ -91,8 +96,8 @@ export default function ProductCard({
           <button
             onClick={(e) => {
               e.preventDefault()
-              toggleFav({ productId: id, slug, name, price, comparePrice: comparePrice ?? null, image: images[0] ?? null, stock, showStock, badge: badge ?? null })
-              toast(fav ? 'Eliminado de favoritos' : '❤️ Agregado a favoritos')
+              toggleFav({ productId: id, slug, name, price, comparePrice: comparePrice ?? null, image: images[0] ?? null, stock, showStock, trackStock, badge: badge ?? null })
+              toast(fav ? 'Eliminado de favoritos' : 'Agregado a favoritos')
             }}
             className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center hover:bg-white transition-colors"
           >
@@ -130,7 +135,7 @@ export default function ProductCard({
         {/* Info */}
         <div className="p-3">
           <p className="text-sm font-medium leading-tight line-clamp-2 mb-1">{name}</p>
-          {showStock && (
+          {showStock && trackStock && (
             <p className={cn('text-xs mb-1', stock <= 5 && stock > 0 ? 'text-orange-500' : stock === 0 ? 'text-red-500' : 'text-gray-400')}>
               {stock === 0 ? 'Sin stock' : stock <= 5 ? `¡Últimas ${stock} unidades!` : `Stock: ${stock}`}
             </p>
@@ -150,12 +155,12 @@ export default function ProductCard({
       <div className="px-3 pb-3">
         <button
           onClick={handleAddToCart}
-          disabled={stock === 0}
+          disabled={trackStock && stock === 0}
           className="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed text-white hover:opacity-90 active:scale-95"
           style={{ backgroundColor: 'var(--color-primary)' }}
         >
           <ShoppingCart size={15} />
-          {stock === 0 ? 'Sin stock' : 'Agregar'}
+          {trackStock && stock === 0 ? 'Sin stock' : 'Agregar'}
         </button>
       </div>
     </motion.div>

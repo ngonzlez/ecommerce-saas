@@ -25,9 +25,10 @@ type Props = {
   shippingMethods: ShippingMethod[]
   paymentMethods: PaymentMethod[]
   tenantName: string
+  customerPrefill: { name: string; lastName: string; email: string; phone: string; address: string } | null
 }
 
-export default function CheckoutForm({ shippingMethods, paymentMethods, tenantName }: Props) {
+export default function CheckoutForm({ shippingMethods, paymentMethods, tenantName, customerPrefill }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { items, subtotal, discountAmount, couponCode, setCoupon, clearCoupon, clearCart } = useCartStore()
@@ -36,6 +37,7 @@ export default function CheckoutForm({ shippingMethods, paymentMethods, tenantNa
     name: '', lastName: '', email: '', phone: '',
     company: '', address: '', city: '', rucCi: '',
   })
+  const [saveData, setSaveData] = useState(false)
   const [selectedShipping, setSelectedShipping] = useState(shippingMethods[0]?.id ?? '')
   const [selectedPayment, setSelectedPayment] = useState(paymentMethods[0]?.id ?? '')
   const [sameBilling, setSameBilling] = useState(true)
@@ -46,6 +48,21 @@ export default function CheckoutForm({ shippingMethods, paymentMethods, tenantNa
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const notes = searchParams.get('notes') ?? ''
+
+  useEffect(() => {
+    if (customerPrefill) {
+      setForm((f) => ({ ...f, ...customerPrefill }))
+      return
+    }
+    try {
+      const saved = localStorage.getItem('checkout-saved-data')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        setForm((f) => ({ ...f, ...parsed }))
+        setSaveData(true)
+      }
+    } catch { /* ignore */ }
+  }, [])
 
   const sub = subtotal()
   const shipping = shippingMethods.find((s) => s.id === selectedShipping)
@@ -104,6 +121,15 @@ export default function CheckoutForm({ shippingMethods, paymentMethods, tenantNa
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error ?? 'Error al procesar el pedido'); return }
+      if (saveData) {
+        localStorage.setItem('checkout-saved-data', JSON.stringify({
+          name: form.name, lastName: form.lastName, email: form.email,
+          phone: form.phone, company: form.company, address: form.address,
+          city: form.city, rucCi: form.rucCi,
+        }))
+      } else {
+        localStorage.removeItem('checkout-saved-data')
+      }
       clearCart()
       router.push(`/pedido/${data.orderNumber}`)
     } catch {
@@ -194,6 +220,17 @@ export default function CheckoutForm({ shippingMethods, paymentMethods, tenantNa
                 className="w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--color-primary)]"
               />
             </div>
+            {!customerPrefill && (
+              <label className="flex items-center gap-2 mt-4 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={saveData}
+                  onChange={(e) => setSaveData(e.target.checked)}
+                  className="rounded accent-[var(--color-primary)] w-4 h-4"
+                />
+                <span className="text-sm text-gray-600">Guardar mis datos para futuras compras</span>
+              </label>
+            )}
           </section>
 
           {/* Métodos de envío */}

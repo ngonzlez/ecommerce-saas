@@ -8,9 +8,10 @@ datasource db {
 }
 
 model Tenant {
-  id   String @id @default(cuid())
-  slug String @unique
-  name String
+  id           String  @id @default(cuid())
+  slug         String  @unique
+  customDomain String? @unique
+  name         String
 
   primaryColor   String  @default("#000000")
   secondaryColor String  @default("#ffffff")
@@ -22,11 +23,16 @@ model Tenant {
   email          String
   address        String?
 
+  aboutText      String?
+  privacyPolicy  String?
+
   requireRegistration    Boolean @default(false)
   allowGuestCheckout     Boolean @default(true)
   whatsappFloatingButton Boolean @default(true)
 
   products        Product[]
+  branches        Branch[]
+  contactNumbers  ContactNumber[]
   categories      Category[]
   orders          Order[]
   banners         Banner[]
@@ -39,6 +45,32 @@ model Tenant {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ContactNumber {
+  id       String  @id @default(cuid())
+  tenantId String
+  tenant   Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  title    String
+  phone    String
+  email    String?
+  order    Int     @default(0)
+  enabled  Boolean @default(true)
+}
+
+model Branch {
+  id       String  @id @default(cuid())
+  tenantId String
+  tenant   Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name     String
+  address  String?
+  city     String?
+  phone    String?
+  hours    String?
+  icon     String  @default("MapPin")
+  mapUrl   String?
+  order    Int     @default(0)
+  enabled  Boolean @default(true)
 }
 
 model SocialLink {
@@ -99,6 +131,7 @@ model Category {
   name     String
   slug     String
   imageUrl String?
+  icon     String?
   products Product[]
 
   @@unique([tenantId, slug])
@@ -115,6 +148,7 @@ model Product {
   comparePrice Int?
   stock        Int     @default(0)
   showStock    Boolean @default(false)
+  trackStock   Boolean @default(false)
   sku          String?
   images       String[]
   featured     Boolean @default(false)
@@ -123,14 +157,37 @@ model Product {
   categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id])
 
-  badge      ProductBadge?
-  orderItems OrderItem[]
-  favorites  Favorite[]
+  badge          ProductBadge?
+  orderItems     OrderItem[]
+  favorites      Favorite[]
+  variantGroups  ProductVariantGroup[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([tenantId, slug])
+  @@index([tenantId, active])
+  @@index([tenantId, categoryId])
+  @@index([tenantId, featured])
+  @@index([tenantId, createdAt(sort: Desc)])
+}
+
+model ProductVariantGroup {
+  id        String                 @id @default(cuid())
+  productId String
+  product   Product                @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String
+  required  Boolean                @default(true)
+  order     Int                    @default(0)
+  options   ProductVariantOption[]
+}
+
+model ProductVariantOption {
+  id      String              @id @default(cuid())
+  groupId String
+  group   ProductVariantGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  name    String
+  order   Int                 @default(0)
 }
 
 model ProductBadge {
@@ -151,6 +208,8 @@ model Banner {
   title    String?
   subtitle String?
   linkUrl  String?
+  linkText String?
+  position String  @default("top")
   order    Int     @default(0)
   enabled  Boolean @default(true)
 }

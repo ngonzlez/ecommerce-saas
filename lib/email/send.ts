@@ -81,7 +81,7 @@ export async function sendOrderEmails({ order, tenant, items, shippingMethod }: 
     subject: `Pedido confirmado #${order.orderNumber} — ${tenant.name}`,
     html: `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
-        <h2>¡Hola ${clientName}! Tu pedido fue recibido 🎉</h2>
+        <h2>Hola ${clientName}, tu pedido fue recibido</h2>
         <p><strong>Número de pedido:</strong> ${order.orderNumber}</p>
         ${summary}
         <p><strong>Método de envío:</strong> ${order.shippingMethodName}</p>
@@ -98,7 +98,7 @@ export async function sendOrderEmails({ order, tenant, items, shippingMethod }: 
   await resend.emails.send({
     from: `Sistema <noreply@tuapp.com>`,
     to: tenant.email,
-    subject: `🛒 Nuevo pedido #${order.orderNumber}`,
+    subject: `Nuevo pedido #${order.orderNumber}`,
     html: `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
         <h2>Nuevo pedido recibido</h2>

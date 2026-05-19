@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
   let subtotal = 0
   const orderItems = items.map((item: { productId: string; quantity: number }) => {
     const product = products.find((p) => p.id === item.productId)!
-    if (product.stock < item.quantity) throw new Error(`Stock insuficiente: ${product.name}`)
+    if (product.trackStock && product.stock < item.quantity) throw new Error(`Stock insuficiente: ${product.name}`)
     subtotal += product.price * item.quantity
     return {
       productId: product.id,
@@ -110,6 +110,18 @@ export async function POST(req: NextRequest) {
 
   const total = Math.max(0, subtotal - discountAmount + shippingMethod.price)
 
+  // Upsert customer so order links to account
+  const customer = await db.customer.upsert({
+    where: { tenantId_email: { tenantId: tenant.id, email: guestEmail.toLowerCase() } },
+    create: {
+      tenantId: tenant.id,
+      email: guestEmail.toLowerCase(),
+      name: guestName,
+      phone: guestPhone ?? null,
+    },
+    update: {},
+  })
+
   // Create order + decrement stock + increment coupon usage in a transaction
   const order = await db.$transaction(async (tx) => {
     // Decrement stock
@@ -131,6 +143,7 @@ export async function POST(req: NextRequest) {
     return tx.order.create({
       data: {
         tenantId: tenant.id,
+        customerId: customer.id,
         orderNumber: generateOrderNumber(),
         guestName,
         guestEmail,

@@ -25,11 +25,14 @@ const DESKTOP_LINKS = NAV_LINKS.filter((l) => l.href !== '/' && l.href !== '/fav
 
 export default function Navbar({ tenantName, logoUrl, categories }: Props) {
   const [isOpen, setIsOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [userInitial, setUserInitial] = useState<string | null>(null)
   const pathname = usePathname()
   const items = useCartStore((s) => s.items)
   const openCart = useCartStore((s) => s.openCart)
-  const totalItems = items.reduce((sum, i) => sum + i.quantity, 0)
+  const totalItems = mounted ? items.reduce((sum, i) => sum + i.quantity, 0) : 0
+
+  useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
     const supabase = createClient()
@@ -44,7 +47,7 @@ export default function Navbar({ tenantName, logoUrl, categories }: Props) {
   }, [pathname])
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-white border-b shadow-sm">
+    <nav className="sticky top-0 w-full z-50 bg-white border-b shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
