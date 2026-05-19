@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "seed": "npx tsx prisma/seed.ts"
+    "seed": "npx tsx prisma/seed.ts",
+    "seed:empty": "npx tsx prisma/seed.empty.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.1",
