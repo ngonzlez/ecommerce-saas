@@ -48,6 +48,6 @@ export function getSlugFromHost(host: string): string {
   if (clean.endsWith(`.${appDomain}`)) {
     return clean.slice(0, clean.length - appDomain.length - 1)
   }
-  return clean
+  return process.env.TENANT_SLUG_DEV ?? clean
 }
 
