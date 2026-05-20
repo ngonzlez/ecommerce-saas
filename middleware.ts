@@ -20,7 +20,7 @@ export function middleware(request: NextRequest) {
   } else if (hostname.endsWith(`.${appDomain}`)) {
     tenantSlug = hostname.slice(0, hostname.length - appDomain.length - 1)
   } else {
-    tenantSlug = hostname
+    tenantSlug = process.env.TENANT_SLUG_DEV ?? 'demo'
   }
 
   const requestHeaders = new Headers(request.headers)
