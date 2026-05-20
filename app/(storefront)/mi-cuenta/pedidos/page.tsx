@@ -27,7 +27,7 @@ export default async function MisPedidosPage() {
   if (!user) redirect('/login')
 
   const headersList = await headers()
-  const slug = getSlugFromHost(headersList.get('host') ?? '')
+  const slug = headersList.get('x-tenant-slug') ?? getSlugFromHost(headersList.get('host') ?? '')
   const tenant = await getTenantBySlug(slug)
   if (!tenant) redirect('/')
 

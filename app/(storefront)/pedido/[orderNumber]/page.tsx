@@ -10,7 +10,7 @@ type Props = { params: Promise<{ orderNumber: string }> }
 export default async function OrderConfirmationPage({ params }: Props) {
   const { orderNumber } = await params
   const headersList = await headers()
-  const slug = getSlugFromHost(headersList.get('host') ?? '')
+  const slug = headersList.get('x-tenant-slug') ?? getSlugFromHost(headersList.get('host') ?? '')
   const tenant = await getTenantBySlug(slug)
   if (!tenant) notFound()
 

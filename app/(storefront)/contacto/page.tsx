@@ -36,7 +36,7 @@ const PLATFORM_ICONS: Record<string, React.ReactNode> = {
 
 export default async function ContactoPage() {
   const headersList = await headers()
-  const slug = getSlugFromHost(headersList.get('host') ?? '')
+  const slug = headersList.get('x-tenant-slug') ?? getSlugFromHost(headersList.get('host') ?? '')
   const tenant = await getTenantBySlug(slug)
   if (!tenant) notFound()
 

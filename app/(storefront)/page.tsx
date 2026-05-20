@@ -10,7 +10,7 @@ import type { HomeTemplateProps } from '@/components/home/types'
 
 export default async function HomePage() {
   const headersList = await headers()
-  const slug = getSlugFromHost(headersList.get('host') ?? '')
+  const slug = headersList.get('x-tenant-slug') ?? getSlugFromHost(headersList.get('host') ?? '')
   const tenant = await getTenantBySlug(slug)
   if (!tenant) notFound()
 

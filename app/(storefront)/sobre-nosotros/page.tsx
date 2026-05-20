@@ -5,7 +5,7 @@ import { MapPin, Mail, Phone } from 'lucide-react'
 
 export default async function SobreNosotrosPage() {
   const headersList = await headers()
-  const slug = getSlugFromHost(headersList.get('host') ?? '')
+  const slug = headersList.get('x-tenant-slug') ?? getSlugFromHost(headersList.get('host') ?? '')
   const tenant = await getTenantBySlug(slug)
   if (!tenant) notFound()
 
